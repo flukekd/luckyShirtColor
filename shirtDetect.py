@@ -1,21 +1,7 @@
 import cv2
 import numpy as np
-import os
-import time
-import imutils
-# multiple cascades: https://github.com/Itseez/opencv/tree/master/data/haarcascades
-
-#https://github.com/Itseez/opencv/blob/master/data/haarcascades/haarcascade_frontalface_default.xml
-cascPath = os.path.dirname(cv2.__file__) + "/data/haarcascades/haarcascade_frontalface_default.xml"
-faceCascade = cv2.CascadeClassifier(cascPath)
-# faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-video_capture = cv2.VideoCapture(0)
-
 import tensorflow as tf
 from tensorflow.keras.models import load_model
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
-
 import threading
 
 # from color_detection import color_detection
@@ -26,12 +12,22 @@ def get_dress(file):
     file = np.expand_dims(file,axis=0)/ 255.
     seq = pretrained_model.predict(file, verbose = 0)
     seq = seq[3][0,:,:,0]
-    seq = np.expand_dims(seq,axis=-1)
-    dummy = np.ones((rgb.shape[0],rgb.shape[1],1))
-    rgbx = np.concatenate((rgb,dummy*255),axis=-1)
+    seq = np.expand_dims(seq, axis=-1)
+    seq[seq < 0.95] = 0
+    seq[seq >= 0.95] = 1
 
-    frame = seq*255
-    frame = frame.astype(np.uint8)
+    c1x = rgb * seq
+    c2x = rgb * (1-seq)
+    cfx = c1x + c2x
+
+    mask = seq * 255.
+
+    dummy = np.ones((rgb.shape[0], rgb.shape[1], 1))
+    rgbx = np.concatenate((rgb, dummy*255), axis=-1)
+    rgbs = np.concatenate((cfx, mask), axis=-1)
+
+    frame1 = seq*255
+    frame = frame1.astype(np.uint8)
     # Convert the grayscale image to binary
     _, binary = cv2.threshold(frame, 100, 255, cv2.THRESH_OTSU)
     
@@ -53,6 +49,7 @@ def get_dress(file):
     # return rgbx/255, False
     return
 
+video_capture = cv2.VideoCapture(0)
 pretrained_model = load_model("save_ckp_frozen.h5")
 detecting = False
 stop = False
@@ -83,6 +80,28 @@ while True:
     dummy = np.ones((rgb.shape[0],rgb.shape[1],1))
     rgbx = np.concatenate((rgb,dummy*255),axis=-1)
     output_img = rgbx/255
+    if w != 0:
+        # create new image of desired size and color (blue) for padding
+        desired_size = 500
+        im_pth = frames
+        im = im_pth
+        old_size = im.shape[:2] # old_size is in (height, width) format
+
+        ratio = float(desired_size)/max(old_size)
+        new_size = tuple([int(x*ratio) for x in old_size])
+
+        # new_size should be in (width, height) format
+
+        im = cv2.resize(im, (new_size[1], new_size[0]))
+
+        delta_w = desired_size - new_size[1]
+        delta_h = desired_size - new_size[0]
+        top, bottom = delta_h//2, delta_h-(delta_h//2)
+        left, right = delta_w//2, delta_w-(delta_w//2)
+
+        color = [0, 0, 0]
+        new_im = cv2.copyMakeBorder(im, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color)
+        cv2.imshow("seq",cv2.cvtColor(new_im, cv2.COLOR_BGR2HSV))
 
     # Detecting Shirt
     if detecting == False and stop == False:
