@@ -11,33 +11,59 @@ while True:
     _,frame = cap.read()
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    lower_yellow = np.array([25,70,120])
-    upper_yellow = np.array([30,255,255])
+    # lower_yellow = np.array([25,70,120])
+    # upper_yellow = np.array([30,255,255])
 
-    lower_green = np.array([40,70,80])
-    upper_green = np.array([70,255,255])
+    # lower_green = np.array([40,70,80])
+    # upper_green = np.array([70,255,255])
 
-    lower_red = np.array([0,50,120])
-    upper_red = np.array([10,255,255])
+    # lower_red = np.array([0,50,120])
+    # upper_red = np.array([10,255,255])
 
-    lower_blue = np.array([90,60,0])
-    upper_blue = np.array([121,255,255])
+    # lower_blue = np.array([90,60,0])
+    # upper_blue = np.array([121,255,255])
 
-    lower_cyan = np.array([160,100,100])
-    upper_cyan = np.array([200,255 ,255])
+    # lower_cyan = np.array([160,100,100])
+    # upper_cyan = np.array([200,255 ,255])
 
-    lower_purple = np.array([290,13,100])
-    upper_purple = np.array([270,100,100])
+    # lower_purple = np.array([290,13,100])
+    # upper_purple = np.array([270,100,100])
 
-    lower_brown = np.array([45,100,55])
-    upper_brown = np.array([35,100,20])
+    # lower_brown = np.array([45,100,55])
+    # upper_brown = np.array([35,100,20])
 
-    lower_pink = np.array([290,100,100])
-    upper_pink = np.array([340,100,100])
+    # lower_pink = np.array([290,100,100])
+    # upper_pink = np.array([340,100,100])
 
-    lower_black = np.array([0,0,0])
-    upper_black = np.array([0,0,0])
+    # lower_black = np.array([0,0,0])
+    # upper_black = np.array([0,0,0])
 
+    lower_yellow = np.array([20, 100, 100])
+    upper_yellow = np.array([30, 255, 255])
+
+    lower_green = np.array([40, 40, 40])
+    upper_green = np.array([70, 255, 255])
+
+    lower_red = np.array([0, 50, 50])
+    upper_red = np.array([10, 255, 255])
+
+    lower_blue = np.array([110, 50, 50])
+    upper_blue = np.array([130, 255, 255])
+
+    lower_cyan = np.array([80, 100, 100])
+    upper_cyan = np.array([100, 255, 255])
+
+    lower_purple = np.array([130, 50, 50])
+    upper_purple = np.array([160, 255, 255])
+
+    lower_brown = np.array([10, 50, 50])
+    upper_brown = np.array([20, 200, 200])
+
+    lower_pink = np.array([150, 50, 50])
+    upper_pink = np.array([170, 255, 255])
+
+    lower_black = np.array([0, 0, 0])
+    upper_black = np.array([180, 255, 30])
 
     mask1 = cv2. inRange (hsv, lower_yellow,upper_yellow)
     mask2 = cv2. inRange (hsv, lower_green,upper_green)
