@@ -75,6 +75,8 @@ while True:
 
     # Display the resulting frame
     # cv2.imshow('Video', frames)
+    
+    # Show input image in the dimension of 512 x 512
     file = tf.image.resize_with_pad(frames,target_height=512,target_width=512)
     rgb  = file.numpy()
     dummy = np.ones((rgb.shape[0],rgb.shape[1],1))
@@ -91,7 +93,6 @@ while True:
         new_size = tuple([int(x*ratio) for x in old_size])
 
         # new_size should be in (width, height) format
-
         im = cv2.resize(im, (new_size[1], new_size[0]))
 
         delta_w = desired_size - new_size[1]
@@ -101,7 +102,7 @@ while True:
 
         color = [0, 0, 0]
         new_im = cv2.copyMakeBorder(im, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color)
-        cv2.imshow("seq",cv2.cvtColor(new_im, cv2.COLOR_BGR2HSV))
+        cv2.imshow("seq",new_im[y:y+h, x:x+w])
 
     # Detecting Shirt
     if detecting == False and stop == False:
